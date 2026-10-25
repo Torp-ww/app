@@ -1,0 +1,24 @@
+name: Выложить приложение в Releases
+
+on:
+  push:
+    paths:
+      - 'dist/*.apk'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Создать релиз
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "v${{ github.run_number }}" dist/semeiny-pomoshnik.apk \
+            --title "Семейный помощник, версия ${{ github.run_number }}" \
+            --notes "Скачайте файл semeiny-pomoshnik.apk на Android-телефон и откройте его. При первой установке разрешите установку из браузера." \
+            --target "${{ github.sha }}" --latest
